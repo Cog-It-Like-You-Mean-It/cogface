@@ -1,5 +1,6 @@
 README.md
 setup.py
+cogface/Cogface-GUI.py
 cogface/Database.py
 cogface/Profile.py
 cogface/__init__.py
