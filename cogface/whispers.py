@@ -32,7 +32,7 @@ def whispers(descriptors, threshold=0.5):
 
     index = 0
     stopping_count = 0
-    stopping_point = 1000
+    stopping_point = 100
     repeat_count = 0
     #repeat_stop = 300
 
@@ -83,3 +83,5 @@ def whispers(descriptors, threshold=0.5):
             break
 
     return graph, adj_mat, cluster_count
+
+
