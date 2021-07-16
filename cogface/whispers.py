@@ -2,9 +2,6 @@ import numpy as np
 from node import Node
 
 
-THRESHOLD_VALUE = 0.5  # TODO: replace
-
-
 def create_dummy(n):
     return [np.random.rand(512) for i in range(n)]
 
@@ -13,9 +10,8 @@ def cos_distance(descriptor_1, descriptor_2):
     return 1 - descriptor_1 @ descriptor_2 / (np.linalg.norm(descriptor_1) * np.linalg.norm(descriptor_2))
 
 
-def whispers(descriptors):
+def whispers(descriptors, threshold=0.5):
     # input: descriptor; shape:(n, 512),  vectors, output:
-    threshold = THRESHOLD_VALUE
 
     n = len(descriptors)
     adj_mat = np.zeros([n, n])
@@ -36,46 +32,56 @@ def whispers(descriptors):
 
     index = 0
     stopping_count = 0
-    stopping_point = 1000
+    stopping_point = 100
     repeat_count = 0
-    repeat_stop = 5
+    #repeat_stop = 300
 
     graph = [Node(i, np.where(adj_mat[i, :] != 0)[
              0], np.reshape(descriptors[i], [512])) for i in range(n)]
 
+    cluster_count = []
+
+    rand_ind = np.arange(n)
+    np.random.shuffle(rand_ind)
+
     while(True):
-        neighbors = np.where(adj_mat[index, :] != 0)[
+        neighbors = np.where(adj_mat[rand_ind[index], :] != 0)[
             0]  # find 1s in this vector
         closest_neighbor = -1
-        closest_dist = 10000000
+        closest_dist = -1
 
         for ne in neighbors:
             #curr_descriptor = np.reshape(descriptors[index], [512])
             #ne_descriptor = np.reshape(descriptors[ne], [512])
             #new_dist = cos_distance(curr_descriptor, ne_descriptor)
 
-            new_dist = adj_mat[index, ne]
+            new_dist = adj_mat[rand_ind[index], ne]
 
             if new_dist > closest_dist:  # new_dist is the weight, so it should be greater
                 closest_dist = new_dist
                 closest_neighbor = ne
 
-        if n == closest_neighbor:
-            repeat_count += 1
-            n = closest_neighbor
+        # if graph[index].label == graph[closest_neighbor].label:
+            #repeat_count += 1
+
+        if closest_neighbor != -1:
+            graph[rand_ind[index]].label = graph[closest_neighbor].label
 
         index += 1
-        stopping_count += 1
         if index == n:
+            np.random.shuffle(rand_ind)
             index = 0
 
-        if repeat_count >= 5:
-            break
+        '''if repeat_count >= 5:
+            print("stopping due to repeat")
+            break'''
+
+        cluster_count.append(len({n.label for n in graph}))
+        stopping_count += 1
         if stopping_count >= stopping_point:
+            print("stopping due to stopping point")
             break
 
-        return graph, adj_mat
+    return graph, adj_mat, cluster_count
 
 
-data = create_dummy(10)
-graph, adj_mat = whispers(data)
