@@ -41,8 +41,11 @@ def whispers(descriptors, threshold=0.5):
 
     cluster_count = []
 
+    rand_ind = np.arange(n)
+    np.random.shuffle(rand_ind)
+
     while(True):
-        neighbors = np.where(adj_mat[index, :] != 0)[
+        neighbors = np.where(adj_mat[rand_ind[index], :] != 0)[
             0]  # find 1s in this vector
         closest_neighbor = -1
         closest_dist = -1
@@ -52,7 +55,7 @@ def whispers(descriptors, threshold=0.5):
             #ne_descriptor = np.reshape(descriptors[ne], [512])
             #new_dist = cos_distance(curr_descriptor, ne_descriptor)
 
-            new_dist = adj_mat[index, ne]
+            new_dist = adj_mat[rand_ind[index], ne]
 
             if new_dist > closest_dist:  # new_dist is the weight, so it should be greater
                 closest_dist = new_dist
@@ -62,10 +65,11 @@ def whispers(descriptors, threshold=0.5):
             #repeat_count += 1
 
         if closest_neighbor != -1:
-            graph[index].label = graph[closest_neighbor].label
+            graph[rand_ind[index]].label = graph[closest_neighbor].label
 
         index += 1
         if index == n:
+            np.random.shuffle(rand_ind)
             index = 0
 
         '''if repeat_count >= 5:
