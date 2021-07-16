@@ -4,8 +4,6 @@ from facenet_models import FacenetModel
 from Profile import Profile
 from utils import cos_distance
 
-# from profile import Profile
-
 class Database:
      
     # initialize database
@@ -15,7 +13,7 @@ class Database:
         
     # add image descriptor to profile, or create profile if it doesn't exist    
     def add_image(self, name, img):
-        if img.shape[-1] > 1080 or img.shape[-2] > 1080:
+        if img.shape[-1] > 4000 or img.shape[-2] > 4000:
             img = img[::4, ::4]
         boxes, probabilities, landmarks = self.model.detect(img)
         idxs = []
@@ -48,8 +46,7 @@ class Database:
         
     # compare input to mean descriptors in database         
     def find_match(self, descriptor):
-        #to change
-        cutoff = 0.3
+        cutoff = 0.6
         dists = []
         names = []
         for name, value in self.database.items():
