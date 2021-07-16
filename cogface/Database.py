@@ -53,5 +53,6 @@ class Database:
             dists.append(cos_distance(value.mean_descriptor, descriptor))
             names.append(name)
         if np.min(dists) < cutoff:
+            self.database[names[np.argmin(dists)]].add_descriptor(descriptor)
             return names[np.argmin(dists)]
         return "Unknown??"
