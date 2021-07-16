@@ -1,0 +1,14 @@
+README.md
+setup.py
+cogface/Database.py
+cogface/Profile.py
+cogface/__init__.py
+cogface/functions_a.py
+cogface/functions_b.py
+cogface/node.py
+cogface/utils.py
+cogface/whispers.py
+cogface.egg-info/PKG-INFO
+cogface.egg-info/SOURCES.txt
+cogface.egg-info/dependency_links.txt
+cogface.egg-info/top_level.txt
